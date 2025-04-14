@@ -6,6 +6,9 @@ target/
 
 .idea
 
+.m2
+
+.logs
 ### STS ###
 .apt_generated
 .classpath

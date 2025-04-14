@@ -25,7 +25,7 @@ services:
       - sw-network
   test_runner:
      build:
-      context: ./service-app
+      context: .
      environment:
        SPRING_PROFILES_ACTIVE: test
        TESTCONTAINERS_HOST_OVERRIDE: host.docker.internal
@@ -40,7 +40,7 @@ services:
    depends_on:
      - mongo_db
    build:
-    context: ./service-app
+    context: .
    restart: on-failure
    env_file: .env
    ports:
@@ -56,20 +56,6 @@ services:
    tty: true
    networks:
      - sw-network
-
-  frontend:
-    container_name: sw-service-app-frontend
-    build:
-      context: ./service-app-fe
-    volumes:
-      - ./service-app-fe:/app
-      - /app/node_modules     
-    ports:
-      - 80:4200
-    stdin_open: true
-    tty: true
-    networks:
-      - sw-network
 
 networks:
   sw-network:
