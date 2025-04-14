@@ -16,6 +16,9 @@ To run the application Docker must be installed.
 Using Bash Script
 ``./local_setup.sh``
 
+Back-end project APIs are exposed in 
+`localhost:8181`
+
 Stop the containers:   ``docker compose down``
 
 To run the application outside the container through IntellIJ
@@ -40,6 +43,7 @@ the configured VM (they are stored as secrets in github secrets section), it exe
 the script.sh which is found in the host machine.
 
 Through this step, with each commit we get a mini simulated simple version of CI/CD.
+
 
 
 ## Logging
