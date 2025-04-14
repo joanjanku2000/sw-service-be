@@ -15,7 +15,6 @@ To run the application Docker must be installed.
 ## Project Setup
 Using Bash Script
 ``./local_setup.sh``
-M
 
 Stop the containers:   ``docker compose down``
 
