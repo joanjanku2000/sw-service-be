@@ -1,0 +1,22 @@
+name: Deploy to Host in Hostinger
+
+on: [push]
+
+jobs:
+  trigger-build:
+    name: Trigger Clone and Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository to the runner
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: SSH into VM and run script
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd /root
+            ./be_setup.sh
