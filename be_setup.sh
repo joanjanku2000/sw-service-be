@@ -2,16 +2,21 @@
 
 set -e
 
-REPO_URL="https://github.com/joanjanku2000/sw-service-fullstack.git"
 
-if [ -d "sw-service-fullstack" ]; then
+# Variables
+REPO_URL="https://github.com/joanjanku2000/sw-service-be.git"
+
+if [ -d "sw-service-be" ]; then
   echo "Directory exists"
-  rm -rf sw-service-fullstack
+  rm -rf sw-service-be
 fi
 
 echo "Cloning repository..."
+
 git clone "$REPO_URL"
-cd sw-service-fullstack
+
+cd sw-service-be
+
 install_docker() {
   echo "Docker not found. Installing Docker..."
 
@@ -38,6 +43,7 @@ install_docker() {
 
   echo "Docker installation complete."
 }
+
 install_docker_compose() {
   echo "Docker Compose not found. Installing Docker Compose..."
 
@@ -48,6 +54,7 @@ install_docker_compose() {
 
   echo "Docker Compose installation finished"
 }
+
 
 if ! command -v docker &> /dev/null; then
   install_docker
