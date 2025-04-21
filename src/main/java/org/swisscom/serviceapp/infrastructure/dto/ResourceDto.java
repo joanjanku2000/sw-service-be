@@ -1,5 +1,6 @@
 package org.swisscom.serviceapp.infrastructure.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Object used only as D-T-O
  */
-public record ResourceDto(String id, @NotNull(message = "Owners cannot be null") @NotEmpty(message = "Owners cannot be empty") List<OwnerDto> owners)
-        implements Serializable {
+public record ResourceDto(String id, @Valid @NotNull(message = "Owners cannot be null") @NotEmpty(message = "Owners cannot be empty") List<OwnerDto> owners)
+        implements BaseDto {
 
 }

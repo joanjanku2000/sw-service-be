@@ -60,6 +60,7 @@ services:
 networks:
   sw-network:
     driver: bridge
+    name: sw-network
 
 volumes:
   db:

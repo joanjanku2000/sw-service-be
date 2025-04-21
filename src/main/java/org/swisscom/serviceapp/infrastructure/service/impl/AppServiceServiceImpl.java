@@ -15,7 +15,11 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.swisscom.serviceapp.domain.model.AppService;
+import org.swisscom.serviceapp.domain.model.Owner;
+import org.swisscom.serviceapp.domain.model.Resource;
 import org.swisscom.serviceapp.domain.repo.AppServiceRepository;
+import org.swisscom.serviceapp.domain.repo.OwnerRepository;
+import org.swisscom.serviceapp.domain.repo.ResourceRepository;
 import org.swisscom.serviceapp.infrastructure.api.exception.ExceptionMessage;
 import org.swisscom.serviceapp.infrastructure.api.exception.NotFoundException;
 import org.swisscom.serviceapp.infrastructure.dto.AppServiceDto;
@@ -23,6 +27,7 @@ import org.swisscom.serviceapp.infrastructure.dto.RestPage;
 import org.swisscom.serviceapp.infrastructure.mapper.AppServiceMapper;
 import org.swisscom.serviceapp.infrastructure.mapper.ResourceMapper;
 import org.swisscom.serviceapp.infrastructure.service.AppServiceService;
+import org.swisscom.serviceapp.infrastructure.service.OwnerService;
 
 import java.util.ConcurrentModificationException;
 import java.util.UUID;
@@ -38,15 +43,23 @@ public class AppServiceServiceImpl implements AppServiceService {
     private static final String CACHE_APP_SERVICES = "app-services";
     private static final String SERVICE_ENTITY_NAME = "Service";
     private static final String ID = "_id";
-    private static final String VERSION = "version";
+    public static final String VERSION = "version";
     private static final String RESOURCES = "resources";
     final Logger log = LoggerFactory.getLogger(AppServiceServiceImpl.class);
     private final AppServiceRepository serviceRepository;
+    private final OwnerService ownerService;
+    private final ResourceRepository resourceRepository;
     private final MongoTemplate mongoTemplate;
+    private final OwnerRepository ownerRepository;
 
-    public AppServiceServiceImpl(AppServiceRepository serviceRepository, MongoTemplate mongoTemplate) {
+    public AppServiceServiceImpl(AppServiceRepository serviceRepository, ResourceRepository resourceRepository,
+                                 OwnerService ownerService, MongoTemplate mongoTemplate,
+                                 OwnerRepository ownerRepository) {
         this.serviceRepository = serviceRepository;
         this.mongoTemplate = mongoTemplate;
+        this.resourceRepository = resourceRepository;
+        this.ownerService = ownerService;
+        this.ownerRepository = ownerRepository;
     }
 
     @Caching(
@@ -55,7 +68,18 @@ public class AppServiceServiceImpl implements AppServiceService {
     )
     @Override
     public AppServiceDto save(final AppServiceDto appServiceDTO) {
-        return AppServiceMapper.toDTO(serviceRepository.save(AppServiceMapper.toEntity(appServiceDTO)));
+        AppService appService = AppServiceMapper.toEntity(appServiceDTO);
+
+        for (Resource resource : appService.getResources()) {
+            for (Owner owner: resource.getOwners()) {
+                ownerRepository.save(owner);
+            }
+            resourceRepository.save(resource);
+        }
+
+        serviceRepository.save(appService);
+
+        return AppServiceMapper.toDTO(appService);
     }
 
     /**

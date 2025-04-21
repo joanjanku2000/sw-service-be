@@ -14,10 +14,6 @@ import java.util.UUID;
  * Extracted into an interface so Liskov's Substitution Principle can
  * be implemented
  */
-public interface AppServiceService {
-    AppServiceDto save(AppServiceDto appServiceDTO);
-    AppServiceDto update(UUID id, AppServiceDto appServiceDTO);
-    AppServiceDto findById(UUID id);
-    RestPage<AppServiceDto> findAll(PageRequest pageRequest);
-    void delete(UUID id);
+public interface AppServiceService extends BaseDocumentService<AppService,AppServiceDto> {
+
 }

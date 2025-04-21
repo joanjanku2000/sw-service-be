@@ -17,7 +17,7 @@ public class OwnerMapper {
     }
 
     public static OwnerDto toDTO(final Owner owner) {
-        return new OwnerDto(owner.getId().toString(), owner.getName(), owner.getAccountNumber(), owner.getLevel());
+        return new OwnerDto(owner.getId().toString(), owner.getName(), owner.getAccountNumber(), owner.getLevel(), owner.getVersion());
     }
 
     public static Owner toEntity(final OwnerDto ownerDto) {
@@ -27,6 +27,7 @@ public class OwnerMapper {
         owner.setName(ownerDto.name());
         owner.setAccountNumber(ownerDto.accountNumber());
         owner.setLevel(ownerDto.level());
+        owner.setVersion(1);
 
         return owner;
     }

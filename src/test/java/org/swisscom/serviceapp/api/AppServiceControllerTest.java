@@ -102,6 +102,20 @@ class AppServiceControllerTest extends ContainerBase {
     }
 
     @Test
+    void givenNegativeLevelOwner_thenSaveNotSuccessful() throws Exception {
+        AppServiceDto appServiceDTO = generateAppServiceDto();
+
+        AppService appService = AppServiceMapper.toEntity(appServiceDTO);
+
+        appService.getResources().get(0).getOwners().get(0).setLevel(-1);
+
+        this.mockMvc.perform(post(Endpoints.SAVE.getUri())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(getJson(AppServiceMapper.toDTO(appService))))
+                .andDo(print()).andExpect(status().is4xxClientError());
+    }
+
+    @Test
     void givenExistingService_thenUpdateSuccessful() throws Exception {
         String updatedName = "JOAN_CHANGED";
         AppServiceDto appServiceDTO = generateAppServiceDto();
@@ -158,6 +172,32 @@ class AppServiceControllerTest extends ContainerBase {
                         .value(ExceptionMessage.CONCURRENT_MODIFICATION.getMessage()));
     }
 
+    @Test
+    void givenNegativeOwnerLevel_thenUpdateFails() throws Exception {
+        AppServiceDto appServiceDTO = generateAppServiceDto();
+
+        MvcResult mvcResult = this.mockMvc.perform(post(Endpoints.SAVE.getUri())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(getJson(appServiceDTO)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resources[0].owners[0].name")
+                        .value("Joan")).andReturn();
+
+        AppService appService = objectMapper.readValue(mvcResult.getResponse().getContentAsString()
+                ,AppService.class);
+
+        appService.getResources().get(0).getOwners().get(0).setLevel(-1);
+
+        AppServiceDto toUseForUpdate = AppServiceMapper.toDTO(appService);
+
+        this.mockMvc.perform(put(Endpoints.UPDATE.getUri(), appService.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(getJson(toUseForUpdate)))
+                .andDo(print()).andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("Level cannot be less than 0"));
+    }
     /**
      * Shoots 2 identical calls one inside another thread
      * and the othe as part of the original thread
@@ -252,7 +292,7 @@ class AppServiceControllerTest extends ContainerBase {
     }
 
     static AppServiceDto generateAppServiceDto() {
-        OwnerDto ownerDTO = new OwnerDto(null,"Joan", "123435634",8);
+        OwnerDto ownerDTO = new OwnerDto(null,"Joan", "123435634",8,1);
 
         ResourceDto resourceDTO = new ResourceDto(null, List.of(ownerDTO));
 
