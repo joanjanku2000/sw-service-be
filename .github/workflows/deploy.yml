@@ -7,11 +7,16 @@ jobs:
     name: Trigger Clone and Build
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository to the runner
-        uses: actions/checkout@v4
+      - name: Tests
+        uses: appleboy/ssh-action@v1
         with:
-          fetch-depth: 0
-      - name: SSH into VM and run script
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd /root
+            ./run_tests.sh
+      - name: Deployment
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VM_HOST }}
