@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   trigger-build:
-    name: Trigger Clone and Build
+    name: Run Tests & Deploy
     runs-on: ubuntu-latest
     steps:
       - name: Tests
